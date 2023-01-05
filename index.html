@@ -7,6 +7,8 @@
     <title>Audio Elements with JavaScript</title>
     <script src="./js/app.js" defer></script>
     <link rel="stylesheet" href="./css/main.css" />
+    <link rel="shortcut icon" href="./img/music-note.jpeg" />
+    <link rel="icon" href="./img/music-note.jpeg" />
   </head>
   <body>
     <header>
@@ -16,11 +18,11 @@
       <section class="media">
         <p>This page has no HTML Audio Element</p>
         <p>
-          <label for="isPlaying">Audio Playing</label>
-          <input type="radio" id="isPlaying" value="isPlaying" readonly aria-readonly="true" />
+          <label>Audio is Playing:</label>
+          <mark id="isPlaying" aria-readonly="true"></mark>
         </p>
         <p>
-          <button id="btnLoad">Load First Track</button>
+          <button id="btnLoad">Load Current Track</button>
         </p>
         <p>
           <button id="btnPlay">Play Loaded Track</button>
@@ -29,8 +31,14 @@
           <button id="btnPause">Pause Loaded Track</button>
         </p>
         <p>
-          <button id="btnOther">Load Next Track</button>
+          <button id="btnNext">Load Next Track</button>
         </p>
+        <p>Current Time <time id="current"></time></p>
+        <p>Total Time <time id="total"></time></p>
+        <p>Percentage Played <span id="pctPlay"></span></p>
+        <div class="progress">
+          <div class="bar"></div>
+        </div>
       </section>
     </main>
   </body>
