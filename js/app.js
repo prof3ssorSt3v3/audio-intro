@@ -99,6 +99,7 @@ const APP = {
     //value for duration has changed
     console.log(ev.type);
     document.getElementById('total').textContent = APP.audio.duration;
+    document.getElementById('title').textContent = APP.tracks[APP.currentTrack].replaceAll('-', ' ');
   },
   timeupdate(ev) {
     //current position in the track has changed while playing
@@ -112,6 +113,7 @@ const APP = {
     document.getElementById('pctPlay').textContent = `${pctTxt}%`;
     let w = parseInt(document.querySelector('.progress').clientWidth);
     document.querySelector('.progress .bar').style.width = `${pct * w}px`;
+    document.querySelector('.progress .bar').style.height = `${pct * w}px`;
   },
   play(ev) {
     //track has started to play
