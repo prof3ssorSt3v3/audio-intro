@@ -1,7 +1,7 @@
 const APP = {
   audio: new Audio(), //create an Audio element in memory
   currentTrack: 0,
-  tracks: ['die-to-live.mp3', 'shes-kerosene.mp3', 'american-idiot.mp3'],
+  tracks: ['carry-on-wayward-son.mp3', 'hard-to-remember.mp3', 'overkill.mp3'],
   init() {
     //page is loaded
     APP.addDOMListeners();
@@ -11,7 +11,9 @@ const APP = {
     //DOM events
     document.getElementById('btnLoad').addEventListener('click', APP.load);
     document.getElementById('btnPlay').addEventListener('click', APP.startPlay);
-    document.getElementById('btnPause').addEventListener('click', APP.pausePlay);
+    document
+      .getElementById('btnPause')
+      .addEventListener('click', APP.pausePlay);
     document.getElementById('btnNext').addEventListener('click', APP.next);
     document.querySelector('.progress').addEventListener('click', APP.doSeek);
 
@@ -24,8 +26,8 @@ const APP = {
         }
       } else {
         //leaving the page
-        APP.wasPlaying = !APP.audio.paused;
-        APP.pausePlay();
+        APP.wasPlaying = !APP.audio.paused; //remember the current state
+        APP.pausePlay(); //acutally do the pause of the audio
       }
     });
   },
@@ -44,16 +46,17 @@ const APP = {
   load(andPlay = false) {
     //load the currentTrack track
     APP.audio.src = `./media/${APP.tracks[APP.currentTrack]}`;
-    console.log(APP.audio.src, 'has been loaded');
-    // console.log(andPlay instanceof Event);
+    console.log('Audio has been loaded', APP.audio.src);
     andPlay && !(andPlay instanceof Event) && APP.startPlay();
+    //automatically start to play if a Boolean value of true is passed in
   },
   startPlay() {
     //play the loaded track
     if (APP.audio.src) {
+      //something is loaded
       APP.audio.play();
     } else {
-      console.warn('Load a track first');
+      console.warn('You need to load a track first');
     }
   },
   pausePlay() {
@@ -62,15 +65,24 @@ const APP = {
   },
   next() {
     //stop the currentTrack and load the next one
+    APP.audio.pause();
     APP.currentTrack++;
     if (APP.currentTrack >= APP.tracks.length) APP.currentTrack = 0;
     APP.load(true);
   },
   doSeek(ev) {
     if (APP.audio.src) {
-      let x = ev.x;
-      let w = ev.currentTarget.clientWidth;
-      let pct = x / w;
+      let xpos = ev.x;
+      let ypos = ev.y;
+      let radius = ev.currentTarget.clientWidth / 2;
+      let cx = ev.currentTarget.offsetLeft + radius;
+      let cy = ev.currentTarget.offsetTop + radius;
+      let deltaX = Math.abs(xpos - cx);
+      let deltaY = Math.abs(ypos - cy);
+      let hyp = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+      //hypotenuse as a percentage of the radius
+      let pct = hyp / radius;
+      //set the current time of the audio to this percentage... which will update the displays
       APP.audio.currentTime = pct * APP.audio.duration;
     }
   },
@@ -99,7 +111,7 @@ const APP = {
     //value for duration has changed
     console.log(ev.type);
     document.getElementById('total').textContent = APP.audio.duration;
-    document.getElementById('title').textContent = APP.tracks[APP.currentTrack].replaceAll('-', ' ');
+    document.getElementById('title').textContent = APP.tracks[APP.currentTrack];
   },
   timeupdate(ev) {
     //current position in the track has changed while playing
@@ -108,6 +120,7 @@ const APP = {
     APP.showPct();
   },
   showPct() {
+    //show the percentage number and update the visual progress bar
     let pct = APP.audio.currentTime / APP.audio.duration;
     let pctTxt = (pct * 100).toFixed(2);
     document.getElementById('pctPlay').textContent = `${pctTxt}%`;
